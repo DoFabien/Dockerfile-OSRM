@@ -36,7 +36,7 @@ if [ -e /data/$OSM_NAME/$PROFILE_LUA/$OSM_NAME.osrm ] && [ $REFRESH != 1 ]
 then
 echo "rien"
 else
-./osrm-extract  /data/$OSM_NAME.osm.pbf -p /data/profiles/$PROFILE_LUA
+./osrm-extract  /data/$FILE_OSM -p /data/profiles/$PROFILE_LUA
 
 mv /data/$OSM_NAME.osrm /data/$OSM_NAME/$PROFILE_LUA/
 mv /data/$OSM_NAME.osrm.names /data/$OSM_NAME/$PROFILE_LUA/
