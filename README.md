@@ -21,10 +21,10 @@ Les fichiers contenant les profils (car.lua, foot.lua,etc.) se trouvent dans /da
 
 ###Executer le conteneur
 ```
-docker run -d -p 5000:5000 -v /var/data:/data \ 
- --name=osrm_rhone-alpes_car \ 
+docker run -d -p 5000:5000 -v data/OSRM:/data \ 
+ --name=osrm_france-latest_car \ 
   -e PROFILE_LUA=car.lua  \
-  -e FILE_OSM=rhone-alpes-latest.osm.pbf \ 
+  -e FILE_OSM=france-latest.osm.pbf \ 
   -e REFRESH=0 dofabien/osrm 
 ```
 Pour accéder aux logs: 

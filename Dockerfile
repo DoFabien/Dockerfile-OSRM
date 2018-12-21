@@ -1,31 +1,33 @@
-FROM ubuntu:14.04
+FROM ubuntu:18.04
 
 RUN apt-get update
 
-RUN apt-get install -y build-essential git cmake pkg-config libprotoc-dev libprotobuf8 \
- protobuf-compiler libprotobuf-dev libosmpbf-dev libpng12-dev \
- libbz2-dev libstxxl-dev libstxxl-doc libstxxl1 libxml2-dev \
- libzip-dev libboost-all-dev lua5.1 liblua5.1-0-dev libluabind-dev libluajit-5.1-dev libtbb-dev
+RUN apt-get install -y build-essential git cmake pkg-config \
+libbz2-dev libxml2-dev libzip-dev libboost-all-dev \
+lua5.2 liblua5.2-dev libtbb-dev
  
-  
+  RUN mkdir -p ~/src
   RUN \
-  git clone  https://github.com/Project-OSRM/osrm-backend.git /src && \
-  mkdir -p /build && \
-  cd /build && \
-  cmake /src && make && \
-  mv /src/profiles/bicycle.lua profile.lua && \
-  mv /src/profiles/lib/ lib && \
-  echo 'disk=/data/stxxl,0,syscall' > /build/.stxxl
+  git clone  https://github.com/Project-OSRM/osrm-backend.git ~/src && \
+  mkdir -p ~/src/build && \
+  cd ~/src/build && \
+  cmake .. && \
+  cmake --build . && \
+  cmake --build . --target install && \
+  cp -rL ~/src/profiles/ ./  && \ 
+  echo 'disk=/data/stxxl,0,syscall' > ~/src/build/.stxxl
  
  ADD run.sh /usr/bin/run.sh
- RUN mkdir -p /data
-
+ RUN chmod 755 /usr/bin/run.sh
+ RUN mkdir -p /data/profiles/lib
+ RUN chmod -R 777 /data
  RUN cd /data 
 
 VOLUME /data
  
 
-RUN chmod -R 777 /data
+
+
 
 
 ENV PROFILE_LUA car.lua
@@ -34,8 +36,8 @@ ENV REFRESH 0
 
 
 
-WORKDIR /build
-ADD run.sh /build/run.sh
-RUN chmod 755 /build/run.sh
+WORKDIR ~/src/build
+# ADD run.sh ~/src/build/run.sh
+# RUN chmod 755 ~/src/build/run.sh
 EXPOSE 5000
-CMD ./run.sh
+CMD run.sh

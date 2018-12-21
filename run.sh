@@ -23,10 +23,6 @@ fi
 echo $OSM_NAME
 
 
-mkdir -p /data/profiles
-mv /src/profiles/*.lua /data/profiles/
-rm -R /src
-
 if [ ! -d /data/$OSM_NAME/$PROFILE_LUA ]
 then
 mkdir -p /data/$OSM_NAME/$PROFILE_LUA
@@ -36,16 +32,14 @@ if [ -e /data/$OSM_NAME/$PROFILE_LUA/$OSM_NAME.osrm ] && [ $REFRESH != 1 ]
 then
 echo "rien"
 else
-./osrm-extract  /data/$FILE_OSM -p /data/profiles/$PROFILE_LUA
 
-mv /data/$OSM_NAME.osrm /data/$OSM_NAME/$PROFILE_LUA/
-mv /data/$OSM_NAME.osrm.names /data/$OSM_NAME/$PROFILE_LUA/
-mv /data/$OSM_NAME.osrm.restrictions /data/$OSM_NAME/$PROFILE_LUA/
-mv /data/$OSM_NAME.osrm.timestamp /data/$OSM_NAME/$PROFILE_LUA/
+cd /data/$OSM_NAME/$PROFILE_LUA
+~/src/build/osrm-extract  /data/$FILE_OSM -p /data/profiles/$PROFILE_LUA
+mv /data/$OSM_NAME.osrm* /data/$OSM_NAME/$PROFILE_LUA/
 
-./osrm-prepare  /data/$OSM_NAME/$PROFILE_LUA/$OSM_NAME.osrm
-
+~/src/build/osrm-partition /data/$OSM_NAME/$PROFILE_LUA/$OSM_NAME.osrm
+~/src/build/osrm-customize /data/$OSM_NAME/$PROFILE_LUA/$OSM_NAME.osrm 
 fi
 
 
-  ./osrm-routed  /data/$OSM_NAME/$PROFILE_LUA/$OSM_NAME.osrm
+  ~/src/build/osrm-routed --algorithm mld  /data/$OSM_NAME/$PROFILE_LUA/$OSM_NAME.osrm
